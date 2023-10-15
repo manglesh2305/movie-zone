@@ -10,6 +10,7 @@ export default class Movies extends React.Component {
       parr:[1],
       currPage:1,
       movies:[],
+      favourites:[],
     }
   }
 
@@ -57,6 +58,28 @@ export default class Movies extends React.Component {
     
   }
 
+  handleFavourites = (movie) => {
+    let oldData = JSON.parse(localStorage.getItem("movies") || "[]");
+    if(this.state.favourites.includes(movie.id)){
+      oldData = oldData.filter((movieObj) => {
+        return movieObj.id !== movie.id; 
+      })
+    }
+    else{
+      oldData.push(movie);
+    }
+    localStorage.setItem("movies",JSON.stringify(oldData));
+    this.handleFavouritesState();
+  }
+
+  handleFavouritesState = () => {
+    let oldData = JSON.parse(localStorage.getItem("movies") || "[]");
+    let temp = oldData.map((movie)=>movie.id);
+    this.setState({
+      favourites:[...temp]
+    })
+  }
+
   render() {
     // const movie = data.results;
     return (
@@ -77,7 +100,7 @@ export default class Movies extends React.Component {
                 <h5 className="card-title movies-title">{movieObj.title}</h5>
                 <div className='button-wrapper' style={{display:'flex',width:'100%',justifyContent:'center'}}>
                 {
-                  movieObj.id === this.state.hover && <a href='#' className='btn btn-primary movies-button'>Add to Favourites</a>
+                  movieObj.id === this.state.hover && <a href='#' className='btn btn-primary movies-button' onClick={()=>this.handleFavourites(movieObj)}>{this.state.favourites.includes(movieObj.id)?'Remove from Favourites':'Add to Favourites'}</a>
                 }
                 </div>
               </div>
